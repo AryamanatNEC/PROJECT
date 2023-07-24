@@ -2,7 +2,8 @@ Version 0.0.1
 
 <h1>Steps to run version</h1>
 1.Navigate to shopping_spider directory<br>
-```bashcd shopping_spider
+```bash
+cd shopping_spider
 ```
 2.Run base_code.py<br>
 ```bash
