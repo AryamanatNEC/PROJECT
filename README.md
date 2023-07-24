@@ -1,6 +1,6 @@
 Version 0.0.1 
 
-#Steps to run version
+# Steps to run version
 1.Navigate to shopping_spider directory<br>
 ```bash
 cd shopping_spider
