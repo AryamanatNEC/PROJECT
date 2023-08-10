@@ -12,13 +12,21 @@ def main():
     )
     parser.add_argument(
         "--use-proxy", action="store_true",
-        help="Use proxy for making requests."
+        help="Use proxy for making requests.Syntax: google_spider [YOUR QUERY] --use-proxy"
+    )
+    parser.add_argument(
+        "--custom-proxy", type=str,
+        help="Custom proxy URL to use for requests.Syntax: google_spider [YOUR QUERY] --use-proxy --custom-proxy [YOUR.PROXY.URL:PORT]"
     )
     args = parser.parse_args()
     #search_query = get_user_input()
     search_query = args.query
     formatted_query = format_search_query(search_query) 
-    ads_data, shopping_results_data = get_shopping_data(formatted_query,use_proxy=args.use_proxy) 
+    custom_proxy = args.custom_proxy if args.custom_proxy else None
+    use_proxy = args.use_proxy or bool(custom_proxy)
+
+    ads_data, shopping_results_data = get_shopping_data(formatted_query, use_proxy=use_proxy, custom_proxy=custom_proxy)
+ 
     '''
     with open("shopping_data.csv", "w", newline="", encoding="utf-8") as csvfile:
         fieldnames = ["title", "link", "source", "price", "delivery", "extensions"]

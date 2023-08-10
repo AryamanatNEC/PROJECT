@@ -34,7 +34,7 @@ def extract_number_from_string(s):
         if parts[i]=='stars.':
             return parts[i+1]
 
-def get_shopping_data(formatted_query,next_page_url=None,use_proxy=False):
+def get_shopping_data(formatted_query,next_page_url=None,use_proxy=False,custom_proxy=None):
     try:
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.54 Safari/537.36"
@@ -52,6 +52,10 @@ def get_shopping_data(formatted_query,next_page_url=None,use_proxy=False):
             proxy_url_https = f"https://{random_proxy['ip']}:{random_proxy['port']}"   
             proxies_server={"http": proxy_url_http,"https":proxy_url_https}
             print("Random Proxy:", random_proxy)
+        elif custom_proxy:
+            proxy_url_http = f"http://{custom_proxy}"
+            proxy_url_https = f"https://{custom_proxy}"
+            proxies_server = {"http": proxy_url_http, "https": proxy_url_https}    
         else:
             print("No proxies available.")
         base_url = f"https://www.google.com/search?q={formatted_query}&tbm=shop&gl=ind"

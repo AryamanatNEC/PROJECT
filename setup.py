@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fhand:
 
 setuptools.setup(
     name="shopping_spider",
-    version="0.0.1",
+    version="2.0.0",
     author="Aryaman Mishra",
     author_email="aryamanatnec@gmail.com",
     description=("Grab Data from Google Shopping"),
