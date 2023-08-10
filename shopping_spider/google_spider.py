@@ -2,6 +2,8 @@ import requests
 from bs4 import BeautifulSoup
 #from user_input import get_user_input
 import random
+import csv
+import json
 proxies = []
 def LoadUpProxies():
     url = 'https://sslproxies.org/'
@@ -34,10 +36,11 @@ def extract_number_from_string(s):
         if parts[i]=='stars.':
             return parts[i+1]
 
-def get_shopping_data(formatted_query,next_page_url=None,use_proxy=False,custom_proxy=None):
+def get_shopping_data(formatted_query,use_proxy=False,custom_proxy=None):
     try:
         headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.54 Safari/537.36"
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.54 Safari/537.36",
+            "Accept": "text/html"
         }
         '''
         proxies = {"http": "http://10.10.1.10:3128",
@@ -109,55 +112,25 @@ def get_shopping_data(formatted_query,next_page_url=None,use_proxy=False,custom_
                 if extensions:
                     result["extensions"] = extensions.get_text()
                 shopping_results.append(result)
-            '''
-            next_page_link = soup.find('a', class_='fl')
-            if next_page_link:
-                next_page_url = "https://google.com" + next_page_link["href"]
-                print(next_page_url)
-                response = requests.get(next_page_url, headers=headers)
-                soup = BeautifulSoup(response.text, "html.parser")
-            else:
-                break
-             '''
+             
             for ad in ads:
                 ad.pop("", None)
 
             for result in shopping_results:
                 result.pop("", None)
 
-            return ads, shopping_results
+            put_into_csv_and_json(ads, shopping_results)
+            break
 
     except Exception as e:
         print(e)
-'''
-def main():
-    search_query = get_user_input()
-    formatted_query = format_search_query(search_query) 
-    ads_data, shopping_results_data = get_shopping_data(formatted_query) 
-    
-    with open("shopping_data.csv", "w", newline="", encoding="utf-8") as csvfile:
-        fieldnames = ["title", "link", "source", "price", "delivery", "extensions"]
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
-        for ad in ads_data:
-            writer.writerow(ad)
-           
-        
+
+def put_into_csv_and_json(ads,shopping_results):
     with open("shopping_results_data.csv", "w", newline="", encoding="utf-8") as csvfile:
         fieldnames = ["title", "link", "source", "price", "rating", "reviews", "delivery", "extensions"]
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
-        for result in shopping_results_data:
+        for result in shopping_results:
             writer.writerow(result)
-
-    # Save to JSON
-    #with open("shopping_data.json", "w", encoding="utf-8") as jsonfile:
-    #    json.dump(ads_data, jsonfile, ensure_ascii=False, indent=2)
-
     with open("shopping_results_data.json", "w", encoding="utf-8") as jsonfile:
-        json.dump(shopping_results_data, jsonfile, ensure_ascii=False, indent=2)
-   
-
-if __name__ == "__main__":
-    main() 
-    '''
+        json.dump(shopping_results, jsonfile, ensure_ascii=False, indent=2)        

@@ -1,8 +1,23 @@
 import argparse
 from .google_spider import *
-import csv
-import json
+from .next_page import *
+from .append_pages import *
 def main():
+    csv_file = "shopping_results_data.csv"
+    json_file = "shopping_results_data.json"
+    try:
+        # Empty CSV file
+        with open(csv_file, "w", newline="", encoding="utf-8") as csvfile:
+            csvfile.truncate(0)
+
+        # Empty JSON file
+        with open(json_file, "w", encoding="utf-8") as jsonfile:
+            jsonfile.truncate(0)
+
+        print("CSV and JSON files have been emptied.")
+
+    except Exception as e:
+        print("An error occurred:", e)
     parser = argparse.ArgumentParser(
         description="CLI Tool to scrape data from Google Shopping."
     )
@@ -25,31 +40,11 @@ def main():
     custom_proxy = args.custom_proxy if args.custom_proxy else None
     use_proxy = args.use_proxy or bool(custom_proxy)
 
-    ads_data, shopping_results_data = get_shopping_data(formatted_query, use_proxy=use_proxy, custom_proxy=custom_proxy)
+    get_shopping_data(formatted_query, use_proxy=use_proxy, custom_proxy=custom_proxy)
+    next_page(formatted_query)
+    append_shopping_data(use_proxy=use_proxy, custom_proxy=custom_proxy)
+    
  
-    '''
-    with open("shopping_data.csv", "w", newline="", encoding="utf-8") as csvfile:
-        fieldnames = ["title", "link", "source", "price", "delivery", "extensions"]
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
-        for ad in ads_data:
-            writer.writerow(ad)
-    '''        
-        
-    with open("shopping_results_data.csv", "w", newline="", encoding="utf-8") as csvfile:
-        fieldnames = ["title", "link", "source", "price", "rating", "reviews", "delivery", "extensions"]
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
-        for result in shopping_results_data:
-            writer.writerow(result)
-
-    # Save to JSON
-    #with open("shopping_data.json", "w", encoding="utf-8") as jsonfile:
-    #    json.dump(ads_data, jsonfile, ensure_ascii=False, indent=2)
-
-    with open("shopping_results_data.json", "w", encoding="utf-8") as jsonfile:
-        json.dump(shopping_results_data, jsonfile, ensure_ascii=False, indent=2)
-   
 
 if __name__ == "__main__":
     main() 
