@@ -16,4 +16,4 @@ google_spider -h
 4.Results stored in shopping_results_data.csv and shopping_results_data.json.<br>
 
 # Coming Updates
-1.Next Page Results Appendement
+1.Working Proxy Implementation
