@@ -1,0 +1,13 @@
+README.md
+pyproject.toml
+setup.py
+shopping_spider/__init__.py
+shopping_spider/cli.py
+shopping_spider/google_spider.py
+shopping_spider/user_input.py
+shopping_spider.egg-info/PKG-INFO
+shopping_spider.egg-info/SOURCES.txt
+shopping_spider.egg-info/dependency_links.txt
+shopping_spider.egg-info/entry_points.txt
+shopping_spider.egg-info/requires.txt
+shopping_spider.egg-info/top_level.txt

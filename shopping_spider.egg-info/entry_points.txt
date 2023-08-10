@@ -1,0 +1,2 @@
+[console_scripts]
+google_spider = shopping_spider.cli:main

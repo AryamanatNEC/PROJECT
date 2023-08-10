@@ -1,0 +1,31 @@
+Metadata-Version: 2.1
+Name: shopping-spider
+Version: 0.0.1
+Summary: Grab Data from Google Shopping
+Home-page: https://github.com/AryamanatNEC/shopping_spider
+Author: Aryaman Mishra
+Author-email: aryamanatnec@gmail.com
+Project-URL: Bug Tracker, https://github.com/AryamanatNEC/shopping_spider/issues
+Classifier: Programming Language :: Python :: 3
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.6
+Description-Content-Type: text/markdown
+
+Version 0.0.1 
+
+# Steps to run version
+1.Navigate to shopping_spider directory<br>
+```bash
+cd shopping_spider
+```
+2.Run base_code.py<br>
+```bash
+python base_code.py
+```
+3.Enter Query<br>
+4.Results stored in shopping_results_data.csv and shopping_results_data.json.<br>
+
+# Coming Updates
+1.CLI Implementation<br>
+2.Proxy Implementation<br>
+3.Next Page Items Data Appendage<br>
