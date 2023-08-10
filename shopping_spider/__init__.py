@@ -1,1 +1,1 @@
-from .google_spider import *
+from google_spider import *

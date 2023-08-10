@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-from user_input import get_user_input
+#from user_input import get_user_input
 from proxy_rotator import *
 import random
 def format_search_query(search_query):
