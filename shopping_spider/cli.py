@@ -2,6 +2,7 @@ import argparse
 from .google_spider import *
 from .next_page import *
 from .append_pages import *
+#from .site_opener import *
 def main():
     csv_file = "shopping_results_data.csv"
     json_file = "shopping_results_data.json"
@@ -31,18 +32,29 @@ def main():
     )
     parser.add_argument(
         "--custom-proxy", type=str,
-        help="Custom proxy URL to use for requests.Syntax: google_spider [YOUR QUERY] --use-proxy --custom-proxy [YOUR.PROXY.URL:PORT]"
+        help="Custom proxy URL to use for requests.Syntax: google_spider [YOUR QUERY] --custom-proxy [YOUR.PROXY.URL:PORT]"
     )
+    '''
+    parser.add_argument(
+        "--open_site", type=int,
+        help="Open URL Link."
+    )
+    '''
     args = parser.parse_args()
     #search_query = get_user_input()
     search_query = args.query
     formatted_query = format_search_query(search_query) 
+    use_proxy = args.use_proxy 
     custom_proxy = args.custom_proxy if args.custom_proxy else None
-    use_proxy = args.use_proxy or bool(custom_proxy)
 
-    get_shopping_data(formatted_query, use_proxy=use_proxy, custom_proxy=custom_proxy)
-    next_page(formatted_query)
-    append_shopping_data(use_proxy=use_proxy, custom_proxy=custom_proxy)
+    get_shopping_data(formatted_query, use_proxy=use_proxy,custom_proxy=custom_proxy)  # Pass custom_proxy argument
+    next_page(formatted_query, use_proxy=use_proxy,custom_proxy=custom_proxy)  # Pass custom_proxy argument
+    append_shopping_data(use_proxy=use_proxy,custom_proxy=custom_proxy)  # Pass custom_proxy argument
+    '''
+    if args.open_site:
+        index=args.open_site
+        open_links_from_file(index)
+        '''
     
  
 

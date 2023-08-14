@@ -1,10 +1,10 @@
 import requests
 from bs4 import BeautifulSoup
 #from user_input import get_user_input
-import random
 import csv
 import json
-proxies = []
+from .proxy_config import proxies
+from .proxy_handler import setup_proxy
 def LoadUpProxies():
     url = 'https://sslproxies.org/'
     header = {
@@ -47,42 +47,17 @@ def get_shopping_data(formatted_query,use_proxy=False,custom_proxy=None):
            "https": "http://10.10.1.10:1080"}
            '''
         LoadUpProxies()
-        proxies_server = None
-        #print(proxies)
-        if use_proxy and proxies:
-            random_proxy = random.choice(proxies)
-            proxy_url_http = f"http://{random_proxy['ip']}:{random_proxy['port']}" 
-            proxy_url_https = f"https://{random_proxy['ip']}:{random_proxy['port']}"   
-            proxies_server={"http": proxy_url_http,"https":proxy_url_https}
-            print("Random Proxy:", random_proxy)
-        elif custom_proxy:
-            proxy_url_http = f"http://{custom_proxy}"
-            proxy_url_https = f"https://{custom_proxy}"
-            proxies_server = {"http": proxy_url_http, "https": proxy_url_https}    
-        else:
-            print("No proxies available.")
+        proxies_server = setup_proxy(use_proxy, proxies, custom_proxy)
         base_url = f"https://www.google.com/search?q={formatted_query}&tbm=shop&gl=ind"
         print(base_url)
         #print(proxies_server)
         response = requests.get(base_url, headers=headers, proxies=proxies_server, timeout=10)
         soup = BeautifulSoup(response.text, "html.parser")
 
-        ads = []
+        
         shopping_results = []
 
         while True:
-            for el in soup.select(".sh-np__click-target"):
-                ad = {
-                    "title": el.select_one(".sh-np__product-title").get_text() if el.select_one(".sh-np__product-title") else None,
-                    "link": "https://google.com" + el.get("href"),
-                    "source": el.select_one(".sh-np__seller-container").get_text() if el.select_one(".sh-np__seller-container") else None,
-                    "price": el.select_one(".hn9kf").get_text() if el.select_one(".hn9kf") else None,
-                    "delivery": el.select_one(".U6puSd").get_text() if el.select_one(".U6puSd") else None,
-                }
-                extensions = el.select_one(".rz2LD")
-                if extensions:
-                    ad["extensions"] = extensions.get_text()
-                ads.append(ad)
 
             for el in soup.select(".sh-dgr__gr-auto"):
                 result = {
@@ -113,19 +88,18 @@ def get_shopping_data(formatted_query,use_proxy=False,custom_proxy=None):
                     result["extensions"] = extensions.get_text()
                 shopping_results.append(result)
              
-            for ad in ads:
-                ad.pop("", None)
+            
 
             for result in shopping_results:
                 result.pop("", None)
 
-            put_into_csv_and_json(ads, shopping_results)
+            put_into_csv_and_json(shopping_results)
             break
 
     except Exception as e:
         print(e)
 
-def put_into_csv_and_json(ads,shopping_results):
+def put_into_csv_and_json(shopping_results):
     with open("shopping_results_data.csv", "w", newline="", encoding="utf-8") as csvfile:
         fieldnames = ["title", "link", "source", "price", "rating", "reviews", "delivery", "extensions"]
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)

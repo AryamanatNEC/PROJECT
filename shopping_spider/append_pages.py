@@ -1,10 +1,10 @@
 from .google_spider import LoadUpProxies,extract_number_from_string
-import random
 from bs4 import BeautifulSoup
 import requests
 import csv
 import json
-proxies = []
+from .proxy_config import proxies
+from .proxy_handler import setup_proxy
 '''
 def append_next_pages():
     with open('next_page_links.txt','r') as f:
@@ -17,7 +17,7 @@ def append_next_pages():
 def append_shopping_data(use_proxy=False,custom_proxy=None):
      with open('next_page_links.txt','r') as f:
         lines=f.readlines()
-     print(lines)
+     #print(lines)
      for line in lines:
         try:
             headers = {
@@ -29,42 +29,17 @@ def append_shopping_data(use_proxy=False,custom_proxy=None):
             "https": "http://10.10.1.10:1080"}
             '''
             LoadUpProxies()
-            proxies_server = None
-            #print(proxies)
-            if use_proxy and proxies:
-                random_proxy = random.choice(proxies)
-                proxy_url_http = f"http://{random_proxy['ip']}:{random_proxy['port']}" 
-                proxy_url_https = f"https://{random_proxy['ip']}:{random_proxy['port']}"   
-                proxies_server={"http": proxy_url_http,"https":proxy_url_https}
-                print("Random Proxy:", random_proxy)
-            elif custom_proxy:
-                proxy_url_http = f"http://{custom_proxy}"
-                proxy_url_https = f"https://{custom_proxy}"
-                proxies_server = {"http": proxy_url_http, "https": proxy_url_https}    
-            else:
-                print("No proxies available.")
-            base_url = line
+            proxies_server = setup_proxy(use_proxy, proxies, custom_proxy)
+            base_url = line.strip()
             print(base_url)
-            #print(proxies_server)
+
             response = requests.get(base_url, headers=headers, proxies=proxies_server, timeout=10)
             soup = BeautifulSoup(response.text, "html.parser")
 
-            ads = []
+            
             shopping_results = []
 
             while True:
-                for el in soup.select(".sh-np__click-target"):
-                    ad = {
-                        "title": el.select_one(".sh-np__product-title").get_text() if el.select_one(".sh-np__product-title") else None,
-                        "link": "https://google.com" + el.get("href"),
-                        "source": el.select_one(".sh-np__seller-container").get_text() if el.select_one(".sh-np__seller-container") else None,
-                        "price": el.select_one(".hn9kf").get_text() if el.select_one(".hn9kf") else None,
-                        "delivery": el.select_one(".U6puSd").get_text() if el.select_one(".U6puSd") else None,
-                    }
-                    extensions = el.select_one(".rz2LD")
-                    if extensions:
-                        ad["extensions"] = extensions.get_text()
-                    ads.append(ad)
 
                 for el in soup.select(".sh-dgr__gr-auto"):
                     result = {
@@ -95,18 +70,17 @@ def append_shopping_data(use_proxy=False,custom_proxy=None):
                         result["extensions"] = extensions.get_text()
                     shopping_results.append(result)
                 
-                for ad in ads:
-                    ad.pop("", None)
+                
 
                 for result in shopping_results:
                     result.pop("", None)
 
-                append_into_csv_and_json(ads, shopping_results)
+                append_into_csv_and_json(shopping_results)
                 break
         except Exception as e:
             print(e)
 
-def append_into_csv_and_json(ads,shopping_results):
+def append_into_csv_and_json(shopping_results):
     with open("shopping_results_data.csv", "a", newline="", encoding="utf-8") as csvfile:
         fieldnames = ["title", "link", "source", "price", "rating", "reviews", "delivery", "extensions"]
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)

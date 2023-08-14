@@ -6,6 +6,9 @@ shopping_spider/append_pages.py
 shopping_spider/cli.py
 shopping_spider/google_spider.py
 shopping_spider/next_page.py
+shopping_spider/proxy_config.py
+shopping_spider/proxy_handler.py
+shopping_spider/site_opener.py
 shopping_spider/user_input.py
 shopping_spider.egg-info/PKG-INFO
 shopping_spider.egg-info/SOURCES.txt
